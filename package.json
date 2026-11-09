@@ -1,0 +1,10 @@
+{
+  "name": "doc2pdf",
+  "version": "1.0.0",
+  "description": "Convert DOCX, XLSX, PPTX and TXT files to PDF using LibreOffice",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": { "node": ">=18" }
+}

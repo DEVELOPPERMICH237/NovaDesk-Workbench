@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 300" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="38" y1="10" x2="520" y2="290" gradientUnits="userSpaceOnUse"><stop stop-color="#e4f7f5"/><stop offset="1" stop-color="#e8edff"/></linearGradient>
+    <linearGradient id="sheet" x1="154" y1="55" x2="263" y2="238" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset="1" stop-color="#f5f7ff"/></linearGradient>
+    <filter id="shadow" x="90" y="34" width="380" height="245" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#34456b" flood-opacity=".14"/></filter>
+  </defs>
+  <rect width="560" height="300" rx="28" fill="url(#bg)"/>
+  <circle cx="475" cy="61" r="39" fill="#fff" fill-opacity=".5"/><circle cx="72" cy="247" r="48" fill="#fff" fill-opacity=".45"/>
+  <g filter="url(#shadow)">
+    <rect x="113" y="57" width="158" height="187" rx="21" fill="url(#sheet)"/>
+    <rect x="140" y="87" width="60" height="60" rx="17" fill="#e9efff"/><path d="M159 130V104l25 26v-26" stroke="#6279de" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M140 174h103m-103 20h82" stroke="#d5dbea" stroke-width="9" stroke-linecap="round"/>
+    <rect x="289" y="57" width="158" height="187" rx="21" fill="#fff"/>
+    <rect x="316" y="87" width="104" height="60" rx="17" fill="#e5f7f1"/><path d="M338 117h60m-12-12 12 12-12 12" stroke="#28a77c" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M316 174h103m-103 20h82" stroke="#d5dbea" stroke-width="9" stroke-linecap="round"/>
+  </g>
+  <rect x="93" y="31" width="88" height="32" rx="16" fill="#6c8cff"/><text x="137" y="52" fill="#fff" font-family="Arial,sans-serif" font-size="14" font-weight="700" text-anchor="middle">PNG · JPG</text>
+  <rect x="373" y="220" width="91" height="34" rx="17" fill="#4cc38a"/><text x="418" y="242" fill="#fff" font-family="Arial,sans-serif" font-size="14" font-weight="700" text-anchor="middle">WAV · CSV</text>
+  <path d="M260 151h39" stroke="#6c8cff" stroke-width="7" stroke-linecap="round"/><path d="m288 138 13 13-13 13" stroke="#6c8cff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

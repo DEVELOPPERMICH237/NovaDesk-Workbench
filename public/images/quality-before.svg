@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" fill="none">
+  <defs>
+    <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#76b8e7"/><stop offset="1" stop-color="#d9f0ff"/></linearGradient>
+    <linearGradient id="shirt" x1="338" y1="256" x2="565" y2="514" gradientUnits="userSpaceOnUse"><stop stop-color="#7c8df3"/><stop offset="1" stop-color="#4659bd"/></linearGradient>
+    <linearGradient id="hair" x1="341" y1="114" x2="553" y2="332" gradientUnits="userSpaceOnUse"><stop stop-color="#59402f"/><stop offset="1" stop-color="#241d1c"/></linearGradient>
+  </defs>
+  <rect width="900" height="520" rx="28" fill="url(#sky)"/>
+  <circle cx="737" cy="101" r="50" fill="#fff1bb" fill-opacity=".9"/>
+  <path d="m0 359 142-123 113 99 133-152 168 171 105-101 239 174v93H0z" fill="#7eb990"/>
+  <path d="m0 414 198-105 132 94 165-121 128 120 135-84 142 91v111H0z" fill="#598d77"/>
+  <ellipse cx="450" cy="491" rx="173" ry="22" fill="#233a4b" fill-opacity=".18"/>
+  <path d="M448 251c-83 0-143 66-143 150v119h289V401c0-84-62-150-146-150Z" fill="url(#shirt)"/>
+  <path d="M359 161c0-75 41-115 94-115 61 0 101 47 101 119v51c0 65-48 115-105 115s-100-50-100-115v-55Z" fill="#efb88e"/>
+  <path d="M349 186c-12-89 29-151 105-151 80 0 125 64 110 157l-11 45-20-64c-46 5-91-12-122-40-10 34-28 60-53 77l-9-24Z" fill="url(#hair)"/>
+  <path d="M384 211c12-8 26-8 38 0m55 0c12-8 26-8 38 0" stroke="#493329" stroke-width="7" stroke-linecap="round"/>
+  <path d="M420 277c18 14 42 14 60 0" stroke="#a44e54" stroke-width="7" stroke-linecap="round"/>
+  <path d="M445 247h13" stroke="#d48d71" stroke-width="5" stroke-linecap="round"/>
+</svg>

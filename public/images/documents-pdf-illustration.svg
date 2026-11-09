@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 300" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="30" y1="16" x2="520" y2="290" gradientUnits="userSpaceOnUse"><stop stop-color="#fff1e8"/><stop offset="1" stop-color="#f0eaff"/></linearGradient>
+    <filter id="shadow" x="90" y="32" width="380" height="245" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#554169" flood-opacity=".15"/></filter>
+  </defs>
+  <rect width="560" height="300" rx="28" fill="url(#bg)"/>
+  <circle cx="481" cy="59" r="41" fill="#fff" fill-opacity=".5"/><circle cx="71" cy="247" r="48" fill="#fff" fill-opacity=".44"/>
+  <g filter="url(#shadow)">
+    <rect x="118" y="52" width="139" height="192" rx="18" fill="#fff"/>
+    <path d="M224 52v40h33" fill="#e9eefc"/><path d="M224 52v40h33" stroke="#e1e6f4" stroke-width="3"/>
+    <rect x="139" y="106" width="56" height="48" rx="12" fill="#e7f4e9"/><text x="167" y="137" fill="#3b8954" font-family="Arial,sans-serif" font-size="17" font-weight="700" text-anchor="middle">DOCX</text>
+    <path d="M139 176h96m-96 20h70" stroke="#d8ddea" stroke-width="9" stroke-linecap="round"/>
+    <rect x="305" y="52" width="139" height="192" rx="18" fill="#fff"/>
+    <path d="M411 52v40h33" fill="#ffe7e5"/><path d="M411 52v40h33" stroke="#f2d5d3" stroke-width="3"/>
+    <rect x="326" y="106" width="97" height="48" rx="12" fill="#fff0ee"/><text x="374" y="137" fill="#dd5d57" font-family="Arial,sans-serif" font-size="18" font-weight="800" text-anchor="middle">PDF</text>
+    <path d="M326 176h96m-96 20h70" stroke="#d8ddea" stroke-width="9" stroke-linecap="round"/>
+  </g>
+  <rect x="99" y="29" width="78" height="32" rx="16" fill="#4cc38a"/><text x="138" y="50" fill="#fff" font-family="Arial,sans-serif" font-size="14" font-weight="700" text-anchor="middle">DOCX</text>
+  <rect x="386" y="219" width="78" height="34" rx="17" fill="#ff766e"/><text x="425" y="242" fill="#fff" font-family="Arial,sans-serif" font-size="14" font-weight="700" text-anchor="middle">PDF</text>
+  <circle cx="280" cy="149" r="25" fill="#fff"/><path d="M268 149h24m-10-10 10 10-10 10" stroke="#7c68cb" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
