@@ -85,7 +85,7 @@ document.addEventListener("keydown", (event) => {
     navToggle.focus();
   }
 });
-window.matchMedia("(min-width: 641px)").addEventListener("change", (event) => {
+window.matchMedia("(min-width: 881px)").addEventListener("change", (event) => {
   if (event.matches) setNavOpen(false);
 });
 
