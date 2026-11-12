@@ -37,9 +37,15 @@ const navToggle = document.getElementById("nav-toggle");
 const topBar = document.querySelector(".top");
 const view = document.getElementById("view");
 const languageToggle = document.getElementById("language-toggle");
+const themeToggle = document.getElementById("theme-toggle");
 const productName = document.querySelector(".product-name");
 const brand = document.querySelector(".brand");
 const footer = document.querySelector(".site-footer");
+const savedTheme = document.documentElement.dataset.theme;
+let currentTheme = savedTheme === "light" || savedTheme === "dark"
+  ? savedTheme
+  : (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+document.documentElement.dataset.theme = currentTheme;
 let cleanup = null;
 let token = 0;
 let revealObserver = null;
@@ -48,6 +54,12 @@ function setNavOpen(open) {
   topBar.classList.toggle("nav-open", open);
   navToggle.setAttribute("aria-expanded", String(open));
   navToggle.setAttribute("aria-label", t(open ? "nav.close" : "nav.open"));
+}
+
+function renderThemeToggle() {
+  const switchingTo = currentTheme === "dark" ? "light" : "dark";
+  themeToggle.textContent = t(`theme.to${switchingTo === "dark" ? "Dark" : "Light"}`);
+  themeToggle.setAttribute("aria-label", t(`theme.ariaTo${switchingTo === "dark" ? "Dark" : "Light"}`));
 }
 
 function renderNavigation() {
@@ -60,6 +72,7 @@ function renderNavigation() {
   brand.setAttribute("aria-label", `NovaDesk ${t("nav.home").toLowerCase()}`);
   footer.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n); });
   footer.querySelector(".footer-socials").setAttribute("aria-label", t("footer.socialLabel"));
+  renderThemeToggle();
   nav.replaceChildren();
 
   const links = [{ id: "", label: t("nav.home") }, ...TOOLS.map((tool) => ({ id: tool.id, label: t(tool.labelKey) }))];
@@ -256,6 +269,12 @@ languageToggle.addEventListener("click", () => {
   const hasWork = view.querySelector(".queue li, #work:not(.hide)");
   if (hasWork && !window.confirm(t("language.resetNotice"))) return;
   setLanguage(getLanguage() === "en" ? "fr" : "en");
+});
+themeToggle.addEventListener("click", () => {
+  currentTheme = currentTheme === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = currentTheme;
+  try { localStorage.setItem("novadesk-theme", currentTheme); } catch {}
+  renderThemeToggle();
 });
 window.addEventListener("languagechange", () => {
   renderNavigation();

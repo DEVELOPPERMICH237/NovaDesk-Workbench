@@ -6,6 +6,14 @@
 <title>NovaDesk · Workbench</title>
 <link rel="icon" type="image/png" href="/images/logo.png">
 <link rel="apple-touch-icon" href="/images/logo.png">
+<script>
+  try {
+    const savedTheme = localStorage.getItem("novadesk-theme");
+    document.documentElement.dataset.theme = savedTheme === "light" || savedTheme === "dark"
+      ? savedTheme
+      : (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+  } catch {}
+</script>
 <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
@@ -37,7 +45,10 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <button id="language-toggle" class="language-toggle" type="button" aria-label="Switch language to French">Français</button>
+      <div class="footer-controls">
+        <button id="language-toggle" class="language-toggle" type="button" aria-label="Switch language to French">Français</button>
+        <button id="theme-toggle" class="language-toggle" type="button" aria-label="Switch to dark mode">Dark mode</button>
+      </div>
       <span data-i18n="footer.copyright">© 2026 NovaDesk. All rights reserved.</span>
       <span data-i18n="footer.madeFor">Made to make everyday file tasks easier.</span>
     </div>

@@ -1,9 +1,11 @@
 :root {
+  color-scheme:dark;
   --bg:#0f1115; --card:#181b22; --line:#2a2f3a; --text:#e8eaf0; --muted:#8b92a3;
   --accent:#6c8cff; --accent-ink:#fff; --ok:#4cc38a; --err:#ff6b6b; --warn:#e6b450;
 }
-@media (prefers-color-scheme: light) {
-  :root { --bg:#f6f7f9; --card:#fff; --line:#dfe3ea; --text:#1b1f27; --muted:#667085; --accent:#3d5afe; }
+:root[data-theme="light"] {
+  color-scheme:light;
+  --bg:#f6f7f9; --card:#fff; --line:#dfe3ea; --text:#1b1f27; --muted:#667085; --accent:#3d5afe;
 }
 * { box-sizing: border-box; }
 html { scroll-behavior:smooth; scroll-padding-top:76px; }
@@ -15,7 +17,7 @@ body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; 
 .brand-logo { width:35px; height:35px; color:var(--accent); flex:none; }
 .language-toggle { background:transparent; color:var(--accent); border:1px solid var(--line); padding:7px 10px; font-size:13px; font-weight:700; white-space:nowrap; }
 .language-toggle:hover { border-color:var(--accent); }
-.footer-bottom .language-toggle { order:-1; margin-right:auto; }
+.footer-controls { display:flex; align-items:center; gap:8px; order:-1; margin-right:auto; }
 .nav-toggle { display:none; width:44px; height:44px; padding:10px; border:1px solid var(--line); border-radius:10px; background:var(--bg); color:var(--text); }
 .nav-toggle span { display:block; height:2px; margin:4px 0; border-radius:2px; background:currentColor; }
 .product-name { justify-self:end; font-size:18px; color:var(--text); text-decoration:none; font-weight:600; white-space:nowrap; }
@@ -134,7 +136,7 @@ a.dl { color:var(--accent); font-size:14px; text-decoration:none; }
   #nav a { min-height:46px; display:flex; align-items:center; padding:10px 12px; border:0; border-radius:9px; }
   #nav a:hover, #nav a[aria-current="page"] { background:color-mix(in srgb, var(--accent) 14%, transparent); }
   #nav a[aria-current="page"] { color:var(--text); }
-  .footer-bottom .language-toggle { margin:0 0 4px; }
+  .footer-controls { margin:0 0 4px; }
 }
 figure { margin:0; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px; }
 figcaption { color:var(--muted); font-size:13px; margin-bottom:8px; }
