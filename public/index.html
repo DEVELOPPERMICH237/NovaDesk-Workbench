@@ -11,13 +11,15 @@
 <body>
 <header class="top">
   <div class="top-inner">
-    <button id="language-toggle" class="language-toggle" type="button" aria-label="Switch language to French">Français</button>
     <a class="brand" href="#/" aria-label="NovaDesk home">
       <img class="brand-logo" src="images/Capture_d_écran_2026-10-05_180356-removebg-preview.png" alt="" aria-hidden="true">
       <span>NovaDesk</span>
     </a>
     <nav id="nav" aria-label="Tools"></nav>
     <span class="product-name">Workbench</span>
+    <button id="nav-toggle" class="nav-toggle" type="button" aria-controls="nav" aria-expanded="false" aria-label="Open navigation">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
 <main id="view" tabindex="-1"></main>
@@ -35,6 +37,7 @@
       </div>
     </div>
     <div class="footer-bottom">
+      <button id="language-toggle" class="language-toggle" type="button" aria-label="Switch language to French">Français</button>
       <span data-i18n="footer.copyright">© 2026 NovaDesk. All rights reserved.</span>
       <span data-i18n="footer.madeFor">Made to make everyday file tasks easier.</span>
     </div>

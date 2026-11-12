@@ -5,6 +5,12 @@ import { t } from "./i18n.js";
 // Conversions that happen entirely in the browser: images, audio -> WAV, CSV <-> JSON.
 const IMG_TARGETS = ["png", "jpg", "webp"];
 const MIME = { png: "image/png", jpg: "image/jpeg", webp: "image/webp" };
+const AVAILABLE_IMG_TARGETS = IMG_TARGETS.filter((target) => {
+  try {
+    const canvas = document.createElement("canvas");
+    return canvas.toDataURL(MIME[target]).startsWith(`data:${MIME[target]}`);
+  } catch { return false; }
+});
 
 function kindOf(file) {
   const ext = extOf(file.name);
@@ -111,7 +117,7 @@ export default function mount(root) {
     supported: (f) => !!kindOf(f),
     targets: (f) => {
       const k = kindOf(f), cur = extOf(f.name).replace("jpeg", "jpg");
-      if (k === "image") return IMG_TARGETS.filter((t) => t !== cur);
+      if (k === "image") return AVAILABLE_IMG_TARGETS.filter((t) => t !== cur);
       if (k === "audio") return ["wav"];
       return [k === "csv" ? "json" : "csv"];
     },

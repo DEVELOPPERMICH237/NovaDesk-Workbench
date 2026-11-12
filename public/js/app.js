@@ -17,6 +17,13 @@ const TOOLS = [
     load: () => import("./convert.js"),
   },
   {
+    id: "compress", labelKey: "tool.compress", descriptionKey: "tool.compress.description", detailKey: "tool.compress.detail",
+    icon: "↓",
+    image: "/images/convert-files-illustration.svg", imageAltKey: "tool.compress.imageAlt",
+    steps: ["tool.compress.step1", "tool.compress.step2", "tool.compress.step3"],
+    load: () => import("./compress.js"),
+  },
+  {
     id: "pdf", labelKey: "tool.pdf", descriptionKey: "tool.pdf.description", detailKey: "tool.pdf.detail",
     icon: "PDF",
     image: "/images/documents-pdf-illustration.svg", imageAltKey: "tool.pdf.imageAlt",
@@ -26,6 +33,8 @@ const TOOLS = [
 ];
 
 const nav = document.getElementById("nav");
+const navToggle = document.getElementById("nav-toggle");
+const topBar = document.querySelector(".top");
 const view = document.getElementById("view");
 const languageToggle = document.getElementById("language-toggle");
 const productName = document.querySelector(".product-name");
@@ -35,10 +44,17 @@ let cleanup = null;
 let token = 0;
 let revealObserver = null;
 
+function setNavOpen(open) {
+  topBar.classList.toggle("nav-open", open);
+  navToggle.setAttribute("aria-expanded", String(open));
+  navToggle.setAttribute("aria-label", t(open ? "nav.close" : "nav.open"));
+}
+
 function renderNavigation() {
   document.documentElement.lang = getLanguage();
   languageToggle.textContent = t("language.switch");
   languageToggle.setAttribute("aria-label", t("language.aria"));
+  navToggle.setAttribute("aria-label", t(topBar.classList.contains("nav-open") ? "nav.close" : "nav.open"));
   nav.setAttribute("aria-label", t("nav.tools"));
   productName.textContent = t("product.name");
   brand.setAttribute("aria-label", `NovaDesk ${t("nav.home").toLowerCase()}`);
@@ -55,6 +71,23 @@ function renderNavigation() {
     nav.append(a);
   }
 }
+
+navToggle.addEventListener("click", () => setNavOpen(navToggle.getAttribute("aria-expanded") !== "true"));
+nav.addEventListener("click", (event) => {
+  if (event.target.closest("a")) setNavOpen(false);
+});
+document.addEventListener("click", (event) => {
+  if (topBar.classList.contains("nav-open") && !topBar.contains(event.target)) setNavOpen(false);
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && topBar.classList.contains("nav-open")) {
+    setNavOpen(false);
+    navToggle.focus();
+  }
+});
+window.matchMedia("(min-width: 641px)").addEventListener("change", (event) => {
+  if (event.matches) setNavOpen(false);
+});
 
 function localizedTool(tool, key) {
   return t(tool[key]);
@@ -111,6 +144,7 @@ async function route() {
     logo.src = "/images/Capture_d_écran_2026-10-05_180356-removebg-preview.png";
     logo.alt = t("home.logoAlt");
     const heading = document.createElement("h1");
+    heading.tabIndex = -1;
     heading.textContent = t("home.title");
     titleRow.append(logo, heading);
     const intro = document.createElement("p");
@@ -177,6 +211,7 @@ async function route() {
     page.append(hero, walkthroughTitle, walkthroughCards, toolSectionTitle, toolCards);
     view.append(page);
     enableHomeScrollEffects(page);
+    heading.focus({ preventScroll: true });
     if (mine !== token) return;
     return;
   }
@@ -202,6 +237,11 @@ async function route() {
     const c = await mod.default(root);
     if (mine !== token) { if (c) c(); return; }
     cleanup = c || null;
+    const heading = view.querySelector("h1");
+    if (heading) {
+      heading.tabIndex = -1;
+      heading.focus();
+    }
   } catch (e) {
     console.error(e);
     if (mine !== token) return;

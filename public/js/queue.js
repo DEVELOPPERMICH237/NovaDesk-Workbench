@@ -6,7 +6,7 @@ import { t } from "./i18n.js";
 //   targets(file)   -> string[] of output formats (omit if there is only one fixed output)
 //   outExt(file, target) -> extension of the result
 //   convert(file, target) -> Promise<Blob>
-export function createQueue({ supported, targets, outExt, convert }) {
+export function createQueue({ supported, targets, outExt, convert, maxFileBytes = Infinity, maxFileSizeLabel = "" }) {
   const el = h("ul", { class: "queue" });
   const items = [];
   const urls = urlTracker();
@@ -34,13 +34,17 @@ export function createQueue({ supported, targets, outExt, convert }) {
   }
 
   function add(file) {
+    const tooLarge = file.size > maxFileBytes;
     const left = h("div", {}, h("div", { class: "name", title: file.name }, file.name),
-      h("div", { class: "meta" }, fmtSize(file.size) + (supported(file) ? "" : t("queue.unsupportedType"))));
-    if (!supported(file)) {
-      el.append(h("li", {}, left, h("div", { class: "state err" }, t("queue.notSupported"))));
+      h("div", { class: "meta" }, fmtSize(file.size),
+        tooLarge ? " · " + t("queue.tooLarge", { size: maxFileSizeLabel }) :
+          (supported(file) ? "" : t("queue.unsupportedType"))));
+    if (!supported(file) || tooLarge) {
+      el.append(h("li", {}, left, h("div", { class: "state err", role: "status", "aria-live": "polite" },
+        tooLarge ? t("queue.fileTooLarge") : t("queue.notSupported"))));
       return;
     }
-    const state = h("div", { class: "state" });
+    const state = h("div", { class: "state", role: "status", "aria-live": "polite" });
     const link = h("a", { class: "dl hide" });
     const btn = h("button", {}, t("queue.convert"));
     const opts = targets ? targets(file) : null;

@@ -1,14 +1,15 @@
 # Workbench
 
-One local web app with three tools:
+One local web app with four tools:
 
 | Tab | What it does | Where it runs |
 |---|---|---|
 | **Remove background** | Cuts the subject out of a photo; optional solid background color | In your browser (WebAssembly model) |
 | **Convert files** | Images (PNG/JPG/WebP), audio to WAV, CSV and JSON | In your browser |
+| **Reduce file size** | JPG/PNG/WebP images and PDF files | Images in your browser; PDFs on the server |
 | **Documents to PDF** | DOCX, XLSX, PPTX, TXT to PDF | On the server, using LibreOffice |
 
-There are no npm dependencies. You need **Node.js 18 or newer**; **LibreOffice** is only needed for the PDF tab.
+There are no npm dependencies. You need **Node.js 18 or newer**. The Documents to PDF tool requires **LibreOffice**; PDF size reduction requires **Ghostscript**. Image size reduction runs in the browser.
 
 ## Run it
 
@@ -18,7 +19,7 @@ node server.js
 
 Then open the address it prints (http://127.0.0.1:3000). Opening `index.html` directly from disk will not work; use the server.
 
-The terminal tells you whether LibreOffice was found. If it was not, the PDF tab explains what to do, and the other two tabs still work.
+The terminal tells you whether LibreOffice was found. Image size reduction works without server-side tools; PDF compression needs Ghostscript installed on the server. Other browser-based tools work without either program.
 
 ### LibreOffice
 
@@ -36,6 +37,10 @@ node server.js
 SOFFICE_BIN="/Applications/LibreOffice.app/Contents/MacOS/soffice" node server.js
 # Linux: sudo apt install libreoffice-writer libreoffice-calc libreoffice-impress
 ```
+
+### Ghostscript (PDF size reduction)
+
+Install Ghostscript on the server running the app. On Debian/Ubuntu, install the `ghostscript` package. On Windows, install Ghostscript and set `GS_BIN` to the full path of `gswin64c.exe` if it is not on PATH. The provided Dockerfile installs both Ghostscript and LibreOffice.
 
 You can install LibreOffice while the server is running; click "Check again" on the PDF tab.
 

@@ -18,6 +18,7 @@ const MAX_MB = Number(process.env.MAX_FILE_MB) || 25;
 const MAX_BYTES = MAX_MB * 1024 * 1024;
 const TIMEOUT_MS = Number(process.env.CONVERT_TIMEOUT_MS) || 120000;
 const SOFFICE = process.env.SOFFICE_BIN || "soffice";
+const GHOSTSCRIPT = process.env.GS_BIN || (process.platform === "win32" ? "gswin64c" : "gs");
 
 const ALLOWED = new Set([".docx", ".xlsx", ".pptx", ".txt"]);
 const ZIP_BASED = new Set([".docx", ".xlsx", ".pptx"]);
@@ -55,6 +56,71 @@ function probeLibreOffice() {
     child.on("error", () => finish(false));
     child.on("close", (code) => finish(code === 0));
   });
+}
+
+function probeGhostscript() {
+  return new Promise((resolve) => {
+    const child = spawn(GHOSTSCRIPT, ["--version"], { stdio: "ignore" });
+    const timer = setTimeout(() => { try { child.kill("SIGKILL"); } catch {} resolve(false); }, 10000);
+    child.once("error", () => { clearTimeout(timer); resolve(false); });
+    child.once("close", (code) => { clearTimeout(timer); resolve(code === 0); });
+  });
+}
+
+function compressPdf(inputPath, outputPath, preset) {
+  const settings = { screen: "/screen", ebook: "/ebook", printer: "/printer" };
+  const pdfSetting = settings[preset] || settings.ebook;
+  return new Promise((resolve, reject) => {
+    const child = spawn(GHOSTSCRIPT, [
+      "-sDEVICE=pdfwrite", "-dCompatibilityLevel=1.5", `-dPDFSETTINGS=${pdfSetting}`,
+      "-dNOPAUSE", "-dBATCH", "-dSAFER", `-sOutputFile=${outputPath}`, inputPath,
+    ], { stdio: "ignore" });
+    let settled = false;
+    const finish = (error) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      if (error) reject(error); else resolve();
+    };
+    const timer = setTimeout(() => {
+      try { child.kill("SIGKILL"); } catch {}
+      finish(new HttpError(504, "PDF compression timed out."));
+    }, TIMEOUT_MS);
+    child.once("error", (error) => finish(new HttpError(503, "PDF compression is unavailable: " + error.message)));
+    child.once("close", (code) => code === 0 ? finish() : finish(new HttpError(422, "Ghostscript could not compress this PDF.")));
+  });
+}
+
+async function handlePdfCompression(req, res, url) {
+  const declared = Number(req.headers["content-length"]);
+  if (declared > MAX_BYTES) throw new HttpError(413, `File is larger than ${MAX_MB} MB.`);
+  if (!(await probeGhostscript())) throw new HttpError(503, "PDF compression is unavailable on this server.");
+
+  await fsp.mkdir(WORK_ROOT, { recursive: true });
+  const workDir = await fsp.mkdtemp(path.join(WORK_ROOT, "compress-"));
+  try {
+    const inputPath = path.join(workDir, "input.pdf");
+    const outputPath = path.join(workDir, "compressed.pdf");
+    await saveBody(req, inputPath);
+    const fh = await fsp.open(inputPath, "r");
+    const head = Buffer.alloc(5);
+    await fh.read(head, 0, head.length, 0);
+    await fh.close();
+    if (head.toString("ascii") !== "%PDF-") throw new HttpError(415, "This does not look like a PDF file.");
+
+    const preset = url.searchParams.get("preset");
+    await enqueue(() => compressPdf(inputPath, outputPath, preset));
+    const { size } = await fsp.stat(outputPath);
+    res.writeHead(200, {
+      "Content-Type": "application/pdf",
+      "Content-Length": size,
+      "Content-Disposition": "attachment; filename=compressed.pdf",
+      "Cache-Control": "no-store",
+    });
+    await pipeline(fs.createReadStream(outputPath), res);
+  } finally {
+    await fsp.rm(workDir, { recursive: true, force: true }).catch(() => {});
+  }
 }
 
 function convertToPdf(inputPath, outDir) {
@@ -147,6 +213,8 @@ async function serveStatic(req, res, pathname) {
   let contentLength = st.size;
   let streamOptions;
   let contentRange;
+  const extension = path.extname(file).toLowerCase();
+  const cachePolicy = [".html", ".js", ".css", ".json"].includes(extension) ? "no-cache" : "public, max-age=3600";
   if (path.extname(file).toLowerCase() === ".mp4" && req.headers.range) {
     const match = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range);
     if (!match || (!match[1] && !match[2])) {
@@ -171,7 +239,7 @@ async function serveStatic(req, res, pathname) {
     "Content-Length": contentLength,
     ...(path.extname(file).toLowerCase() === ".mp4" ? { "Accept-Ranges": "bytes" } : {}),
     ...(contentRange ? { "Content-Range": contentRange } : {}),
-    "Cache-Control": "no-cache",
+    "Cache-Control": cachePolicy,
     "X-Content-Type-Options": "nosniff",
   });
   if (req.method === "HEAD") return res.end();
@@ -179,14 +247,19 @@ async function serveStatic(req, res, pathname) {
 }
 
 const server = http.createServer(async (req, res) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
   const url = new URL(req.url, "http://localhost");
   try {
     if (req.method === "GET" && url.pathname === "/api/health") {
       if (!pdfAvailable) pdfAvailable = await probeLibreOffice(); // re-checked until found, so installing it needs no restart
       res.writeHead(200, { "Content-Type": "application/json", "Cache-Control": "no-store" });
-      return res.end(JSON.stringify({ pdf: pdfAvailable, maxFileMb: MAX_MB }));
+      return res.end(JSON.stringify({ pdf: pdfAvailable, pdfCompression: await probeGhostscript(), maxFileMb: MAX_MB }));
     }
     if (req.method === "POST" && url.pathname === "/convert") return await handleConvert(req, res, url);
+    if (req.method === "POST" && url.pathname === "/compress-pdf") return await handlePdfCompression(req, res, url);
     if (req.method === "GET" || req.method === "HEAD") return await serveStatic(req, res, url.pathname);
     throw new HttpError(405, "Method not allowed.");
   } catch (err) {

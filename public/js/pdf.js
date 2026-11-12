@@ -27,7 +27,8 @@ export default async function mount(root) {
   let queue = null;
   const body = h("div");
   const toolSection = h("section", { class: "bg-tool-section pdf-tool-section", id: "pdf-converter-tool" },
-    ...pageHeader(t("pdf.title"), t("pdf.description")), body);
+    ...pageHeader(t("pdf.title"), t("pdf.description")),
+    h("p", { class: "privacy-note", role: "note" }, t("pdf.privacyNotice")), body);
   const hero = h("section", { class: "bg-hero pdf-hero" },
     h("div", { class: "bg-hero-copy" },
       h("p", { class: "home-eyebrow" }, t("pdf.heroEyebrow")),
@@ -88,6 +89,8 @@ export default async function mount(root) {
     queue = createQueue({
       supported: (f) => OK.has(extOf(f.name)),
       outExt: () => "pdf",
+      maxFileBytes: (health.maxFileMb || 25) * 1024 * 1024,
+      maxFileSizeLabel: String(health.maxFileMb || 25),
       convert: (f) => toPdf(f),
     });
     const toolbar = h("div", { class: "bar hide" },

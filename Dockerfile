@@ -8,6 +8,7 @@ RUN apt-get update \
         libreoffice-writer \
         libreoffice-calc \
         libreoffice-impress \
+        ghostscript \
         fonts-liberation \
     && rm -rf /var/lib/apt/lists/*
 
