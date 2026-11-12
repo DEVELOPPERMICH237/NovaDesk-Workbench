@@ -56,6 +56,13 @@ export default async function mount(root) {
   const presetRow = h("label", { class: "opt compress-option hide" }, t("compress.pdfPreset"), preset);
   const reduceButton = h("button", { disabled: true }, t("compress.reduce"));
   const download = h("a", { class: "btn hide", href: "#" }, t("compress.download"));
+  const previewBefore = h("div", { class: "compression-preview-content" });
+  const previewAfter = h("div", { class: "compression-preview-content" });
+  const preview = h("section", { class: "compression-preview hide", "aria-label": t("compress.previewTitle") },
+    h("h2", {}, t("compress.previewTitle")),
+    h("div", { class: "compression-preview-grid" },
+      h("figure", {}, h("figcaption", {}, t("compress.previewOriginal")), previewBefore),
+      h("figure", {}, h("figcaption", {}, t("compress.previewResult")), previewAfter)));
   const imagePrivacy = h("p", { class: "privacy-note hide" }, t("compress.imagePrivacy"));
   const pdfPrivacy = h("p", { class: "privacy-note hide" }, t("compress.pdfPrivacy"));
   const sizeLimit = h("p", { class: "meta" }, t("compress.sizeLimit", { size: maxMb }));
@@ -70,6 +77,13 @@ export default async function mount(root) {
       const extension = selected ? extOf(selected.name) : "";
       const supported = extension === "pdf" || IMAGE_TYPES.has(extension);
       urls.free(download.dataset.url);
+      urls.free(previewBefore.dataset.url);
+      urls.free(previewAfter.dataset.url);
+      previewBefore.dataset.url = "";
+      previewAfter.dataset.url = "";
+      previewBefore.replaceChildren();
+      previewAfter.replaceChildren();
+      preview.classList.add("hide");
       download.removeAttribute("href");
       download.classList.add("hide");
       reduceButton.disabled = !selected || !supported || selected.size > maxBytes || (extension === "pdf" && !health.pdfCompression);
@@ -124,6 +138,17 @@ export default async function mount(root) {
       download.href = resultUrl;
       download.download = `${baseName(selected.name)}-reduced.${extension === "jpeg" ? "jpg" : extension}`;
       download.classList.remove("hide");
+      const makePreview = (container, blob, label) => {
+        const url = urls.make(blob);
+        container.dataset.url = url;
+        const node = extension === "pdf"
+          ? h("iframe", { class: "compression-pdf-preview", src: url, title: label })
+          : h("img", { class: "compression-image-preview", src: url, alt: label });
+        container.replaceChildren(node);
+      };
+      makePreview(previewBefore, selected, t("compress.previewOriginal"));
+      makePreview(previewAfter, result, t("compress.previewResult"));
+      preview.classList.remove("hide");
       const percent = reduced ? Math.round((1 - result.size / selected.size) * 100) : 0;
       status.textContent = reduced
         ? t("compress.done", { before: fmtSize(selected.size), after: fmtSize(result.size), percent })
@@ -139,7 +164,7 @@ export default async function mount(root) {
   const section = h("section", { class: "bg-tool-section compress-tool-section" },
     ...pageHeader(t("compress.title"), t("compress.description")),
     sizeLimit, zone, h("div", { class: "bar compress-options" }, qualityRow, dimensionRow, presetRow), pngNote,
-    h("div", { class: "bar" }, reduceButton, download), imagePrivacy, pdfPrivacy, status);
+    h("div", { class: "bar" }, reduceButton, download), imagePrivacy, pdfPrivacy, status, preview);
   const hero = h("section", { class: "bg-hero compress-hero" },
     h("div", { class: "bg-hero-copy" },
       h("p", { class: "home-eyebrow" }, t("compress.eyebrow")),

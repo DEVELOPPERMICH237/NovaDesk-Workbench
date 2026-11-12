@@ -80,7 +80,8 @@ export default function mount(root) {
 
   const comparisonPreview = comparison.querySelector(".quality-preview");
   const toolSection = h("section", { class: "bg-tool-section", id: "remove-background-tool" },
-    ...pageHeader(t("background.title"), t("background.description")), zone, work);
+    ...pageHeader(t("background.title"), t("background.description")),
+    h("p", { class: "privacy-note", role: "note" }, t("background.privacyNotice")), zone, work);
 
   root.append(hero, comparison, toolSection);
 

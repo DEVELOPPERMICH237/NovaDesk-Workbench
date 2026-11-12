@@ -65,11 +65,11 @@ p.sub { margin:0 0 22px; color:var(--muted); }
 .tool-link:focus-visible { outline:2px solid var(--accent); outline-offset:4px; border-radius:2px; }
 
 .drop { border:2px dashed var(--line); border-radius:14px; padding:44px 16px; text-align:center; background:var(--card); cursor:pointer; transition:border-color .15s; }
-.drop:hover, .drop:focus-visible, .drop.over { border-color:var(--accent); outline:none; }
+.drop:hover, .drop:focus-visible, .drop.over { border-color:var(--accent); }
 .drop small { display:block; color:var(--muted); margin-top:6px; }
 
 button, .btn { background:var(--accent); color:var(--accent-ink); border:0; border-radius:8px; padding:9px 14px; font-size:14px; cursor:pointer; font-family:inherit; }
-button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible, .drop:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
 button.ghost { background:transparent; border:1px solid var(--line); color:var(--text); }
 button:disabled { opacity:.5; cursor:default; }
 select { background:var(--bg); color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px; font-size:14px; }
@@ -92,13 +92,38 @@ input[type=color] { width:40px; height:36px; border:1px solid var(--line); borde
 
 /* file queue */
 ul.queue { list-style:none; margin:0; padding:0; display:grid; gap:10px; }
-ul.queue li { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:grid; grid-template-columns:1fr auto auto auto; gap:12px; align-items:center; }
+ul.queue li { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:grid; grid-template-columns:minmax(0, 1fr) minmax(100px, auto) auto minmax(110px, auto) auto; gap:12px; align-items:center; }
 .name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .meta { color:var(--muted); font-size:12px; }
 .state { font-size:13px; color:var(--muted); min-width:90px; }
 .state.ok { color:var(--ok); } .state.err { color:var(--err); }
 a.dl { color:var(--accent); font-size:14px; text-decoration:none; }
-@media (max-width:640px) { ul.queue li { grid-template-columns:1fr 1fr; } }
+.queue-result { min-width:0; }
+.queue-actions { display:flex; align-items:center; justify-content:flex-end; gap:8px; }
+.queue-select, .queue-select-all { accent-color:var(--accent); }
+.queue-select { width:20px; height:20px; cursor:pointer; }
+.queue-remove { min-width:40px; min-height:40px; padding:4px 10px; font-size:20px; line-height:1; }
+.queue-progress { display:block; width:100%; min-width:100px; height:6px; margin:0 0 5px; }
+.queue-select-all { margin-left:auto; }
+.compression-preview { margin-top:24px; }
+.compression-preview h2 { margin:0 0 14px; font-size:18px; }
+.compression-preview-grid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:14px; }
+.compression-preview figure { min-width:0; }
+.compression-preview-content { min-height:180px; display:grid; place-items:center; overflow:hidden; border-radius:8px; background:var(--bg); }
+.compression-image-preview { display:block; max-width:100%; max-height:420px; object-fit:contain; }
+.compression-pdf-preview { display:block; width:100%; height:520px; border:0; background:#fff; }
+@media (max-width:640px) {
+  ul.queue li { grid-template-columns:minmax(0, 1fr) auto; gap:10px; }
+  ul.queue li > :first-child, .queue-result { grid-column:1 / -1; }
+  ul.queue li > select { min-width:0; max-width:100%; }
+  ul.queue li > button:not(.queue-remove) { justify-self:start; }
+  .queue-actions { grid-column:2; grid-row:4; }
+  .queue-toolbar { align-items:stretch; }
+  .queue-toolbar > button { flex:1 1 42%; }
+  .queue-select-all { flex:1 1 100%; margin:0; }
+  .compression-preview-grid { grid-template-columns:1fr; }
+  .compression-pdf-preview { height:420px; }
+}
 
 /* background remover */
 #work { margin-top:22px; }

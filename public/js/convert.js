@@ -113,7 +113,13 @@ export default function mount(root) {
   const qv = h("span", {}, "90");
   quality.addEventListener("input", () => (qv.textContent = quality.value));
 
+  let toolbar;
+  let selectAll;
   const queue = createQueue({
+    onChange: ({ size }) => {
+      toolbar?.classList.toggle("hide", size === 0);
+      if (!size && selectAll) selectAll.checked = false;
+    },
     supported: (f) => !!kindOf(f),
     targets: (f) => {
       const k = kindOf(f), cur = extOf(f.name).replace("jpeg", "jpg");
@@ -130,10 +136,16 @@ export default function mount(root) {
     },
   });
 
-  const toolbar = h("div", { class: "bar hide" },
-    h("button", { onclick: () => queue.convertAll() }, t("convert.all")),
-    h("button", { class: "ghost", onclick: () => { queue.clear(); toolbar.classList.add("hide"); } }, t("convert.clear")),
+  selectAll = h("input", { type: "checkbox", "aria-label": t("queue.selectAll") });
+  const convertAll = h("button", { onclick: async () => { convertAll.disabled = true; await queue.convertAll(); convertAll.disabled = false; } }, t("convert.all"));
+  toolbar = h("div", { class: "bar queue-toolbar hide" },
+    convertAll,
+    h("button", { class: "ghost", onclick: () => queue.downloadSelected() }, t("queue.downloadSelected")),
+    h("button", { class: "ghost", onclick: () => { queue.removeSelected(); selectAll.checked = false; toolbar.classList.toggle("hide", queue.size === 0); } }, t("queue.removeSelected")),
+    h("button", { class: "ghost", onclick: () => { queue.clear(); selectAll.checked = false; toolbar.classList.add("hide"); } }, t("convert.clear")),
+    h("label", { class: "opt queue-select-all" }, selectAll, t("queue.selectAll")),
     h("label", { class: "opt" }, t("convert.quality"), quality, qv));
+  selectAll.addEventListener("change", () => queue.selectAll(selectAll.checked));
 
   const zone = dropzone({
     title: t("convert.dropTitle"), multiple: true,
@@ -142,7 +154,7 @@ export default function mount(root) {
   });
 
   const toolSection = h("section", { class: "bg-tool-section convert-tool-section", id: "convert-files-tool" },
-    ...pageHeader(t("convert.title"), t("convert.description")), zone, toolbar, queue.el);
+    ...pageHeader(t("convert.title"), t("convert.description")), zone, toolbar, queue.status, queue.el);
   const hero = h("section", { class: "bg-hero convert-hero" },
     h("div", { class: "bg-hero-copy" },
       h("p", { class: "home-eyebrow" }, t("convert.heroEyebrow")),
