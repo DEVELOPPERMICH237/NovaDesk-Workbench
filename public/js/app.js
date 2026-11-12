@@ -5,7 +5,7 @@ const TOOLS = [
   {
     id: "background", labelKey: "tool.background", descriptionKey: "tool.background.description", detailKey: "tool.background.detail",
     icon: "✂",
-    image: "/images/tools-feature_background-remover_promo-showcase_01-AFTER.png", imageAltKey: "tool.background.imageAlt",
+    image: "/images/tools.png", imageAltKey: "tool.background.imageAlt",
     steps: ["tool.background.step1", "tool.background.step2", "tool.background.step3"],
     load: () => import("./bg.js"),
   },
