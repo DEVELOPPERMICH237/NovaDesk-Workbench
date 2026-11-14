@@ -2,6 +2,9 @@ const STRINGS = {
   en: {
     "language.switch": "Français",
     "language.aria": "Switch language to French",
+    "language.group": "Language",
+    "language.english": "English",
+    "language.french": "French",
     "language.resetNotice": "Changing language will clear the current files and results. Continue?",
     "theme.toDark": "Dark mode",
     "theme.toLight": "Light mode",
@@ -195,6 +198,9 @@ const STRINGS = {
   fr: {
     "language.switch": "English",
     "language.aria": "Passer la langue en anglais",
+    "language.group": "Langue",
+    "language.english": "Anglais",
+    "language.french": "Français",
     "language.resetNotice": "Le changement de langue effacera les fichiers et résultats en cours. Continuer ?",
     "theme.toDark": "Mode sombre",
     "theme.toLight": "Mode clair",

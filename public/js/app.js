@@ -58,14 +58,36 @@ function setNavOpen(open) {
 
 function renderThemeToggle() {
   const switchingTo = currentTheme === "dark" ? "light" : "dark";
-  themeToggle.textContent = t(`theme.to${switchingTo === "dark" ? "Dark" : "Light"}`);
+  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("aria-hidden", "true");
+  if (switchingTo === "dark") {
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", "M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z");
+    icon.append(path);
+  } else {
+    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    circle.setAttribute("cx", "12"); circle.setAttribute("cy", "12"); circle.setAttribute("r", "4");
+    icon.append(circle);
+    for (const [x1, y1, x2, y2] of [[12, 2, 12, 4], [12, 20, 12, 22], [4.93, 4.93, 6.34, 6.34], [17.66, 17.66, 19.07, 19.07], [2, 12, 4, 12], [20, 12, 22, 12], [4.93, 19.07, 6.34, 17.66], [17.66, 6.34, 19.07, 4.93]]) {
+      const ray = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      ray.setAttribute("x1", x1); ray.setAttribute("y1", y1); ray.setAttribute("x2", x2); ray.setAttribute("y2", y2);
+      icon.append(ray);
+    }
+  }
+  themeToggle.replaceChildren(icon);
   themeToggle.setAttribute("aria-label", t(`theme.ariaTo${switchingTo === "dark" ? "Dark" : "Light"}`));
+  themeToggle.title = t(`theme.ariaTo${switchingTo === "dark" ? "Dark" : "Light"}`);
 }
 
 function renderNavigation() {
   document.documentElement.lang = getLanguage();
-  languageToggle.textContent = t("language.switch");
-  languageToggle.setAttribute("aria-label", t("language.aria"));
+  languageToggle.setAttribute("aria-label", t("language.group"));
+  languageToggle.querySelectorAll("[data-language]").forEach((button) => {
+    const selected = button.dataset.language === getLanguage();
+    button.setAttribute("aria-pressed", String(selected));
+    button.setAttribute("aria-label", t(button.dataset.language === "en" ? "language.english" : "language.french"));
+  });
   navToggle.setAttribute("aria-label", t(topBar.classList.contains("nav-open") ? "nav.close" : "nav.open"));
   nav.setAttribute("aria-label", t("nav.tools"));
   productName.textContent = t("product.name");
@@ -265,16 +287,20 @@ async function route() {
   }
 }
 
-languageToggle.addEventListener("click", () => {
+languageToggle.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-language]");
+  if (!button || button.dataset.language === getLanguage()) return;
   const hasWork = view.querySelector(".queue li, #work:not(.hide)");
   if (hasWork && !window.confirm(t("language.resetNotice"))) return;
-  setLanguage(getLanguage() === "en" ? "fr" : "en");
+  if (window.matchMedia("(max-width: 880px)").matches) setNavOpen(false);
+  setLanguage(button.dataset.language);
 });
 themeToggle.addEventListener("click", () => {
   currentTheme = currentTheme === "dark" ? "light" : "dark";
   document.documentElement.dataset.theme = currentTheme;
   try { localStorage.setItem("novadesk-theme", currentTheme); } catch {}
   renderThemeToggle();
+  if (window.matchMedia("(max-width: 880px)").matches) setNavOpen(false);
 });
 window.addEventListener("languagechange", () => {
   renderNavigation();
