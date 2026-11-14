@@ -94,6 +94,8 @@ function renderNavigation() {
   brand.setAttribute("aria-label", `NovaDesk ${t("nav.home").toLowerCase()}`);
   footer.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n); });
   footer.querySelector(".footer-socials").setAttribute("aria-label", t("footer.socialLabel"));
+  footer.querySelector(".about-trigger").setAttribute("aria-label", t("footer.aboutMe"));
+  footer.querySelector(".about-card").setAttribute("aria-label", t("footer.aboutTitle"));
   renderThemeToggle();
   nav.replaceChildren();
 
